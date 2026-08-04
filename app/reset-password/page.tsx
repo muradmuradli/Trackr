@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -178,4 +178,10 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+const ResetPasswordPage = () => (
+  <Suspense>
+    <ResetPassword />
+  </Suspense>
+);
+
+export default ResetPasswordPage;

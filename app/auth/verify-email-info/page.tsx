@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MailIcon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
@@ -82,4 +82,10 @@ const VerifyEmail = () => {
   );
 };
 
-export default VerifyEmail;
+const VerifyEmailPage = () => (
+  <Suspense>
+    <VerifyEmail />
+  </Suspense>
+);
+
+export default VerifyEmailPage;
