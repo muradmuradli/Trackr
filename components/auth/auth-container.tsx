@@ -12,10 +12,12 @@ import { useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 const AuthContainer = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
   const justVerified = searchParams.get("verified") === "true";
   const passwordReset = searchParams.get("reset") === "true";
+
+  const [isLogin, setIsLogin] = useState(mode === "login");
 
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
