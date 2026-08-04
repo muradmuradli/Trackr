@@ -59,7 +59,7 @@ const ResetPassword = () => {
       return;
     }
 
-    router.push("/auth?reset=true");
+    router.push("/auth?mode=login&reset=true");
   }
 
   return (

@@ -16,6 +16,7 @@ import { LogInIcon } from "lucide-react";
 import { trpc } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -25,6 +26,8 @@ const loginSchema = z.object({
 });
 
 export function AuthLoginForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -43,6 +46,8 @@ export function AuthLoginForm() {
       console.error(error.message);
       return;
     }
+
+    router.push("/dashboard");
   }
 
   return (

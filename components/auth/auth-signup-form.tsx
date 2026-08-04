@@ -48,6 +48,7 @@ export function AuthSignupForm() {
       name: data.fullName,
       email: data.email,
       password: data.password,
+      callbackURL: "/auth?mode=login&verified=true",
     });
 
     if (error) {

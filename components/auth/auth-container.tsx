@@ -27,7 +27,7 @@ const AuthContainer = () => {
   };
 
   return (
-    <div className="bg-card p-6 rounded-2xl w-full max-w-sm h-fit shadow-xl border border-border">
+    <div className="bg-card p-6 rounded-2xl w-full max-w-md h-fit shadow-xl border border-border">
       {justVerified && (
         <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center">
           Email verified! You can now log in.

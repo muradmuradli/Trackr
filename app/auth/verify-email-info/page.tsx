@@ -19,7 +19,7 @@ const VerifyEmail = () => {
     setStatus("sending");
     const { error } = await authClient.sendVerificationEmail({
       email,
-      callbackURL: "/auth?verified=true",
+      callbackURL: "/auth?mode=login&verified=true",
     });
     setStatus(error ? "idle" : "sent");
 
