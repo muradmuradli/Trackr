@@ -16,13 +16,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Bell, CheckCircle2, LayoutGrid } from "lucide-react";
 
-type Session =
-  | {
-      user: {
-        name?: string;
-      };
-    }
-  | undefined;
+type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 function getInitials(name?: string) {
   if (!name) return "";
