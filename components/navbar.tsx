@@ -44,7 +44,7 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
           <ThemeToggle />
 
           {session && (
-            <div className="flex items-center">
+            <div className="hidden items-center sm:flex">
               <Button
                 variant="ghost"
                 className="text-slate-600 dark:text-slate-300"
