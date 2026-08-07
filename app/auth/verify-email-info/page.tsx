@@ -38,22 +38,25 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200">
-      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center">
-        <div className="bg-blue-50 p-3 rounded-full">
-          <MailIcon className="text-blue-700 h-6 w-6" />
+    <div className="flex items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center dark:bg-slate-900 dark:shadow-none">
+        <div className="bg-blue-50 p-3 rounded-full dark:bg-blue-500/10">
+          <MailIcon className="text-blue-700 h-6 w-6 dark:text-blue-400" />
         </div>
 
         <h1 className="text-xl font-semibold">Check your inbox</h1>
 
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-500 text-sm dark:text-slate-400">
           We sent a verification link to{" "}
-          <strong className="text-slate-700">{email}</strong>. Click it to
-          activate your account.
+          <strong className="text-slate-700 dark:text-slate-300">
+            {email}
+          </strong>
+          . Click it to activate your account.
         </p>
 
-        <p className="text-slate-400 text-xs">
-          Didn't see it? Check your spam folder — the link expires in 1 hour.
+        <p className="text-slate-400 text-xs dark:text-slate-500">
+          Didn&apos;t see it? Check your spam folder — the link expires in 1
+          hour.
         </p>
 
         <Button
@@ -73,7 +76,7 @@ const VerifyEmail = () => {
 
         <a
           href="/auth"
-          className="text-blue-700 text-xs hover:underline cursor-pointer text-center text-[14px] font-light"
+          className="text-blue-700 text-xs hover:underline cursor-pointer text-center text-[14px] font-light dark:text-blue-400"
         >
           Wrong email? Go back
         </a>

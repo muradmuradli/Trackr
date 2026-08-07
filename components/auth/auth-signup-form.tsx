@@ -27,6 +27,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { UserPlus } from "lucide-react";
 
@@ -111,13 +112,12 @@ export function AuthSignupForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="signup-password">Password</FieldLabel>
-                <Input
+                <PasswordInput
                   className="py-3"
                   {...field}
                   id="signup-password"
                   aria-invalid={fieldState.invalid}
                   placeholder="••••••••"
-                  type="password"
                   autoComplete="new-password"
                 />
                 {fieldState.invalid && (
@@ -134,13 +134,12 @@ export function AuthSignupForm() {
                 <FieldLabel htmlFor="signup-confirm-password">
                   Confirm Password
                 </FieldLabel>
-                <Input
+                <PasswordInput
                   className="py-3"
                   {...field}
                   id="signup-confirm-password"
                   aria-invalid={fieldState.invalid}
                   placeholder="••••••••"
-                  type="password"
                   autoComplete="new-password"
                 />
                 {fieldState.invalid && (
@@ -156,7 +155,7 @@ export function AuthSignupForm() {
           <Button
             disabled={form.formState.isSubmitting}
             type="submit"
-            className="bg-blue-700 px-3 py-5 w-full hover:bg-blue-600"
+            className="bg-blue-700 px-3 py-5 w-full text-white hover:bg-blue-600"
             form="signup-form"
           >
             {form.formState.isSubmitting ? "Signing up..." : "Sign Up"}

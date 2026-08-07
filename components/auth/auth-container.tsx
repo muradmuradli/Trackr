@@ -29,12 +29,12 @@ const AuthContainer = () => {
   return (
     <div className="bg-card p-6 rounded-2xl w-full max-w-md h-fit shadow-xl border border-border">
       {justVerified && (
-        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center">
+        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-green-500/10 dark:text-green-400">
           Email verified! You can now log in.
         </div>
       )}
       {passwordReset && (
-        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center">
+        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-green-500/10 dark:text-green-400">
           Password reset! You can now log in.
         </div>
       )}
@@ -92,10 +92,10 @@ const AuthContainer = () => {
           <div className="text-center text-[14px] text-muted-foreground font-light">
             {isLogin ? (
               <>
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <button
                   type="button"
-                  className="text-blue-700 hover:underline cursor-pointer"
+                  className="text-blue-700 hover:underline cursor-pointer dark:text-blue-400"
                   onClick={() => setIsLogin(false)}
                 >
                   Sign up
@@ -106,7 +106,7 @@ const AuthContainer = () => {
                 Already have an account?{" "}
                 <button
                   type="button"
-                  className="text-blue-700 hover:underline cursor-pointer"
+                  className="text-blue-700 hover:underline cursor-pointer dark:text-blue-400"
                   onClick={() => setIsLogin(true)}
                 >
                   Log in

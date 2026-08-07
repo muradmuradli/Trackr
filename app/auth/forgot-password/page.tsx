@@ -49,24 +49,24 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200">
-      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center">
+    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center dark:bg-slate-900 dark:shadow-none">
         {status === "sent" ? (
           <>
-            <div className="bg-blue-50 p-3 rounded-full">
-              <MailIcon className="text-blue-700 h-6 w-6" />
+            <div className="bg-blue-50 p-3 rounded-full dark:bg-blue-500/10">
+              <MailIcon className="text-blue-700 h-6 w-6 dark:text-blue-400" />
             </div>
             <h1 className="text-xl font-semibold">Check your inbox</h1>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-500 text-sm dark:text-slate-400">
               If an account exists for{" "}
-              <strong className="text-slate-700">
+              <strong className="text-slate-700 dark:text-slate-300">
                 {form.getValues("email")}
               </strong>
-              , we've sent a link to reset your password.
+              , we&apos;ve sent a link to reset your password.
             </p>
-            <p className="text-slate-400 text-xs">
-              Didn't see it? Check your spam folder — the link expires in 1
-              hour.
+            <p className="text-slate-400 text-xs dark:text-slate-500">
+              Didn&apos;t see it? Check your spam folder — the link expires in
+              1 hour.
             </p>
             <Button
               variant="outline"
@@ -79,8 +79,8 @@ const ForgotPassword = () => {
         ) : (
           <>
             <h1 className="text-xl font-semibold">Forgot your password?</h1>
-            <p className="text-slate-500 text-sm mb-2">
-              Enter your email and we'll send you a link to reset it.
+            <p className="text-slate-500 text-sm mb-2 dark:text-slate-400">
+              Enter your email and we&apos;ll send you a link to reset it.
             </p>
 
             <form
@@ -114,7 +114,9 @@ const ForgotPassword = () => {
               </FieldGroup>
 
               {serverError && (
-                <p className="text-red-600 text-sm mt-3">{serverError}</p>
+                <p className="text-red-600 text-sm mt-3 dark:text-red-400">
+                  {serverError}
+                </p>
               )}
 
               <div className="mt-4">
@@ -122,7 +124,7 @@ const ForgotPassword = () => {
                   <Button
                     type="submit"
                     disabled={form.formState.isSubmitting}
-                    className="bg-blue-700 px-3 py-5 w-full hover:bg-blue-600"
+                    className="bg-blue-700 px-3 py-5 w-full text-white hover:bg-blue-600"
                     form="forgot-password-form"
                   >
                     {form.formState.isSubmitting
@@ -139,7 +141,7 @@ const ForgotPassword = () => {
 
       <a
         href="/auth"
-        className="text-slate-500 flex items-center gap-2 mt-4 text-sm font-light hover:text-slate-600"
+        className="text-slate-500 flex items-center gap-2 mt-4 text-sm font-light hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
       >
         <MoveLeft size={14} />
         Back to login

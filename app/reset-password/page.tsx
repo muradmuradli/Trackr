@@ -9,7 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRoundIcon, MoveLeft, TriangleAlertIcon } from "lucide-react";
@@ -63,20 +63,20 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200">
-      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center">
+    <div className="flex flex-col items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center dark:bg-slate-900 dark:shadow-none">
         {!token || tokenError ? (
           <>
-            <div className="bg-red-50 p-3 rounded-full">
-              <TriangleAlertIcon className="text-red-600 h-6 w-6" />
+            <div className="bg-red-50 p-3 rounded-full dark:bg-red-500/10">
+              <TriangleAlertIcon className="text-red-600 h-6 w-6 dark:text-red-400" />
             </div>
             <h1 className="text-xl font-semibold">Link expired</h1>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-500 text-sm dark:text-slate-400">
               This password reset link is invalid or has expired. Request a
               new one to continue.
             </p>
             <Button
-              className="bg-blue-700 px-3 py-5 w-full hover:bg-blue-600 mt-2"
+              className="bg-blue-700 px-3 py-5 w-full text-white hover:bg-blue-600 mt-2"
               onClick={() => router.push("/auth/forgot-password")}
             >
               Request a new link
@@ -85,7 +85,7 @@ const ResetPassword = () => {
         ) : (
           <>
             <h1 className="text-xl font-semibold">Set a new password</h1>
-            <p className="text-slate-500 text-sm mb-2">
+            <p className="text-slate-500 text-sm mb-2 dark:text-slate-400">
               Choose a new password for your account.
             </p>
 
@@ -103,13 +103,12 @@ const ResetPassword = () => {
                       <FieldLabel htmlFor="reset-password-password">
                         New Password
                       </FieldLabel>
-                      <Input
+                      <PasswordInput
                         className="py-3"
                         {...field}
                         id="reset-password-password"
                         aria-invalid={fieldState.invalid}
                         placeholder="••••••••"
-                        type="password"
                         autoComplete="new-password"
                       />
                       {fieldState.invalid && (
@@ -126,13 +125,12 @@ const ResetPassword = () => {
                       <FieldLabel htmlFor="reset-password-confirm-password">
                         Confirm Password
                       </FieldLabel>
-                      <Input
+                      <PasswordInput
                         className="py-3"
                         {...field}
                         id="reset-password-confirm-password"
                         aria-invalid={fieldState.invalid}
                         placeholder="••••••••"
-                        type="password"
                         autoComplete="new-password"
                       />
                       {fieldState.invalid && (
@@ -144,7 +142,9 @@ const ResetPassword = () => {
               </FieldGroup>
 
               {serverError && (
-                <p className="text-red-600 text-sm mt-3">{serverError}</p>
+                <p className="text-red-600 text-sm mt-3 dark:text-red-400">
+                  {serverError}
+                </p>
               )}
 
               <div className="mt-4">
@@ -152,7 +152,7 @@ const ResetPassword = () => {
                   <Button
                     type="submit"
                     disabled={form.formState.isSubmitting}
-                    className="bg-blue-700 px-3 py-5 w-full hover:bg-blue-600"
+                    className="bg-blue-700 px-3 py-5 w-full text-white hover:bg-blue-600"
                     form="reset-password-form"
                   >
                     {form.formState.isSubmitting
@@ -169,7 +169,7 @@ const ResetPassword = () => {
 
       <a
         href="/auth"
-        className="text-slate-500 flex items-center gap-2 mt-4 text-sm font-light hover:text-slate-600"
+        className="text-slate-500 flex items-center gap-2 mt-4 text-sm font-light hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
       >
         <MoveLeft size={14} />
         Back to login

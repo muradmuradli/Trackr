@@ -34,10 +34,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn, trpc } from "@/lib/utils";
+import { STATUS_OPTIONS, SOURCE_OPTIONS } from "@/lib/application";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, Plus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const applicationSchema = z
@@ -67,21 +69,6 @@ const applicationSchema = z
       path: ["salaryMax"],
     },
   );
-
-const STATUS_OPTIONS = [
-  { value: "saved", label: "Saved" },
-  { value: "applied", label: "Applied" },
-  { value: "interview", label: "Interview" },
-  { value: "offer", label: "Offer" },
-  { value: "rejected", label: "Rejected" },
-  { value: "withdrawn", label: "Withdrawn" },
-] as const;
-
-const SOURCE_OPTIONS = [
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "company_website", label: "Company Website" },
-  { value: "other", label: "Other" },
-] as const;
 
 const AddApplication = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -115,6 +102,7 @@ const AddApplication = () => {
       await createMutation.mutateAsync(data);
       form.reset();
       setIsDialogOpen(false);
+      toast.success("Application added successfully!");
     } catch (error) {
       console.error(error);
     }
@@ -133,7 +121,7 @@ const AddApplication = () => {
             Add Application
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-lg px-5 py-6">
+        <DialogContent className="sm:max-w-lg px-5 py-6 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Application</DialogTitle>
             <DialogDescription>
@@ -321,7 +309,9 @@ const AddApplication = () => {
               >
                 <FieldLabel htmlFor="salaryMin">
                   Salary Range
-                  <span className="text-slate-400">(optional)</span>
+                  <span className="text-slate-400 dark:text-slate-500">
+                    (optional)
+                  </span>
                 </FieldLabel>
                 <div className="flex items-center gap-2">
                   <Controller

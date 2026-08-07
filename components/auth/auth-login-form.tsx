@@ -12,6 +12,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { LogInIcon } from "lucide-react";
 import { trpc } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -82,19 +83,19 @@ export function AuthLoginForm() {
                 <div className="flex justify-between items-center">
                   <FieldLabel htmlFor="login-password">Password</FieldLabel>
                   <Link
-                    className="text-[12px] font-light text-blue-700 hover:underline"
+                    className="text-[12px] font-light text-blue-700 hover:underline dark:text-blue-400"
                     href={"/auth/forgot-password"}
+                    tabIndex={-1}
                   >
                     Forgot your password?
                   </Link>
                 </div>
-                <Input
+                <PasswordInput
                   className="py-3"
                   {...field}
                   id="login-password"
                   aria-invalid={fieldState.invalid}
                   placeholder="••••••••"
-                  type="password"
                   autoComplete="current-password"
                 />
                 {fieldState.invalid && (
@@ -110,7 +111,7 @@ export function AuthLoginForm() {
           <Button
             type="submit"
             disabled={form.formState.isSubmitting}
-            className="bg-blue-700 px-3 py-5 w-full hover:bg-blue-600"
+            className="bg-blue-700 px-3 py-5 w-full text-white hover:bg-blue-600"
             form="login-form"
           >
             {form.formState.isSubmitting ? "Logging in..." : "Log In"}
