@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { and, inArray, isNull, lt, or } from "drizzle-orm";
 import { db } from "@/db";
 import { jobApplications, user } from "@/db/schema";
-import { resend } from "@/lib/resend";
+import { brevo, EMAIL_SENDER } from "@/lib/brevo";
 
 // A job counts as "waiting on someone else" only in these two statuses —
 // "saved" hasn't been sent yet, and offer/rejected/withdrawn are resolved.
@@ -89,14 +89,14 @@ export async function GET(request: Request) {
     const jobs = jobsByUser.get(recipient.id) ?? [];
     if (jobs.length === 0) continue;
 
-    await resend.emails.send({
-      from: "Trackr <onboarding@resend.dev>",
-      to: recipient.email,
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: EMAIL_SENDER,
+      to: [{ email: recipient.email, name: recipient.name }],
       subject:
         jobs.length === 1
           ? `Time to follow up on ${jobs[0].companyName}?`
           : `You have ${jobs.length} applications to follow up on`,
-      html: buildDigestHtml(recipient.name, jobs, appUrl),
+      htmlContent: buildDigestHtml(recipient.name, jobs, appUrl),
     });
 
     remindersSent += 1;
