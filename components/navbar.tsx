@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Logo from "@/components/logo";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import { authClient } from "@/lib/auth-client";
 import { getInitials } from "@/lib/utils";
@@ -58,6 +58,7 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar className="cursor-pointer">
+                    <AvatarImage src={session.user.image ?? undefined} />
                     <AvatarFallback>
                       {getInitials(session.user.name)}
                     </AvatarFallback>
@@ -66,13 +67,11 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
                 <DropdownMenuContent className="w-40" align="end">
                   <DropdownMenuGroup>
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      Profile
-                      <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      Settings
-                      <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/profile">
+                        Profile
+                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                      </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />

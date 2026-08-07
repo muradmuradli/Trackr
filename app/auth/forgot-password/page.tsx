@@ -68,6 +68,10 @@ const ForgotPassword = () => {
               Didn&apos;t see it? Check your spam folder — the link expires in
               1 hour.
             </p>
+            <p className="text-slate-400 text-xs dark:text-slate-500">
+              Signed up with Google? The link will let you add a password —
+              or you can just continue signing in with Google.
+            </p>
             <Button
               variant="outline"
               className="w-full mt-2"

@@ -36,7 +36,7 @@ const Search = ({
   onStatusChange,
 }: SearchProps) => {
   return (
-    <div className="my-6 flex flex-col gap-3 sm:my-10 sm:flex-row sm:items-center sm:gap-4">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
       <div className="relative w-full bg-white sm:w-10/12 dark:bg-slate-900">
         <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
         <Input

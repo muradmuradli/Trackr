@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
+import { trpc } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRoundIcon, MoveLeft, TriangleAlertIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
@@ -33,6 +34,11 @@ const ResetPassword = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const tokenError = searchParams.get("error");
+
+  const { data: tokenInfo } = trpc.auth.getResetTokenInfo.useQuery(
+    { token: token ?? "" },
+    { enabled: !!token && !tokenError },
+  );
 
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -65,7 +71,7 @@ const ResetPassword = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
       <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl shadow-slate-300 flex flex-col items-center gap-3 text-center dark:bg-slate-900 dark:shadow-none">
-        {!token || tokenError ? (
+        {!token || tokenError || tokenInfo?.valid === false ? (
           <>
             <div className="bg-red-50 p-3 rounded-full dark:bg-red-500/10">
               <TriangleAlertIcon className="text-red-600 h-6 w-6 dark:text-red-400" />
@@ -84,9 +90,15 @@ const ResetPassword = () => {
           </>
         ) : (
           <>
-            <h1 className="text-xl font-semibold">Set a new password</h1>
+            <h1 className="text-xl font-semibold">
+              {tokenInfo?.hasPassword === false
+                ? "Create a password"
+                : "Set a new password"}
+            </h1>
             <p className="text-slate-500 text-sm mb-2 dark:text-slate-400">
-              Choose a new password for your account.
+              {tokenInfo?.hasPassword === false
+                ? "You signed up with Google, so there's no existing password to reset — this will add one you can also use to sign in, alongside Google."
+                : "Choose a new password for your account."}
             </p>
 
             <form
@@ -157,7 +169,9 @@ const ResetPassword = () => {
                   >
                     {form.formState.isSubmitting
                       ? "Saving..."
-                      : "Reset password"}
+                      : tokenInfo?.hasPassword === false
+                        ? "Create password"
+                        : "Reset password"}
                     <KeyRoundIcon />
                   </Button>
                 </Field>

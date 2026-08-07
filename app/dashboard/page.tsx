@@ -1,6 +1,7 @@
 "use client";
 
 import AddJobButton from "@/components/dashboard/add-job-button";
+import ExportCsvButton from "@/components/dashboard/export-csv-button";
 import InfoPanels from "@/components/dashboard/info-panels";
 import JobsPagination from "@/components/dashboard/jobs-pagination";
 import JobsTable from "@/components/dashboard/jobs-table";
@@ -60,12 +61,17 @@ const Dashboard = () => {
 
         <InfoPanels />
 
-        <Search
-          query={query}
-          onQueryChange={setQuery}
-          status={status}
-          onStatusChange={setStatus}
-        />
+        <div className="my-6 flex flex-col gap-3 sm:my-10 sm:flex-row sm:items-center">
+          <div className="flex-1">
+            <Search
+              query={query}
+              onQueryChange={setQuery}
+              status={status}
+              onStatusChange={setStatus}
+            />
+          </div>
+          <ExportCsvButton query={debouncedQuery} status={status} />
+        </div>
 
         <JobsPagination
           page={page}

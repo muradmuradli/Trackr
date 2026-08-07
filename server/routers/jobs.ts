@@ -1,22 +1,24 @@
 import { z } from "zod";
-import { eq, and, asc, desc, ilike, or, count } from "drizzle-orm";
+import { eq, and, asc, desc, ilike, inArray, or, count } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 import { db } from "@/db";
 import { jobApplications, jobStatusEvents } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 
+const STATUS_VALUES = [
+  "saved",
+  "applied",
+  "interview",
+  "offer",
+  "rejected",
+  "withdrawn",
+] as const;
+
 const jobSchema = z.object({
   companyName: z.string().min(1),
   roleTitle: z.string().min(1),
   jobUrl: z.url().optional().or(z.literal("")),
-  status: z.enum([
-    "saved",
-    "applied",
-    "interview",
-    "offer",
-    "rejected",
-    "withdrawn",
-  ]),
+  status: z.enum(STATUS_VALUES),
   date: z.coerce.date(),
   source: z.enum(["linkedin", "company_website", "other"]),
   salaryMin: z.number().positive().optional(),
@@ -107,16 +109,7 @@ export const jobsRouter = router({
     .input(
       z.object({
         query: z.string().optional(),
-        status: z
-          .enum([
-            "saved",
-            "applied",
-            "interview",
-            "offer",
-            "rejected",
-            "withdrawn",
-          ])
-          .optional(),
+        status: z.enum(STATUS_VALUES).optional(),
         page: z.number().min(1).default(1),
         pageSize: z.number().min(1).max(100).default(15),
       }),
@@ -158,6 +151,39 @@ export const jobsRouter = router({
         pageSize: input.pageSize,
         totalPages: Math.max(1, Math.ceil(total / input.pageSize)),
       };
+    }),
+
+  // Same filters as `list`, but no pagination — backs the CSV export, which
+  // needs every matching row rather than one page of them.
+  exportAll: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().optional(),
+        status: z.enum(STATUS_VALUES).optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const conditions = [eq(jobApplications.userId, ctx.session.user.id)];
+
+      if (input.status) {
+        conditions.push(eq(jobApplications.status, input.status));
+      }
+
+      if (input.query) {
+        conditions.push(
+          or(
+            ilike(jobApplications.companyName, `%${input.query}%`),
+            ilike(jobApplications.roleTitle, `%${input.query}%`),
+          )!,
+        );
+      }
+
+      return db
+        .select()
+        .from(jobApplications)
+        .where(and(...conditions))
+        .orderBy(desc(jobApplications.createdAt))
+        .limit(5000);
     }),
 
   update: protectedProcedure
@@ -217,5 +243,68 @@ export const jobsRouter = router({
 
       if (!deleted) throw new TRPCError({ code: "NOT_FOUND" });
       return deleted;
+    }),
+
+  bulkDelete: protectedProcedure
+    .input(z.object({ ids: z.array(z.uuid()).min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const deleted = await db
+        .delete(jobApplications)
+        .where(
+          and(
+            inArray(jobApplications.id, input.ids),
+            eq(jobApplications.userId, ctx.session.user.id),
+          ),
+        )
+        .returning({ id: jobApplications.id });
+
+      return { deletedIds: deleted.map((row) => row.id) };
+    }),
+
+  bulkUpdateStatus: protectedProcedure
+    .input(
+      z.object({
+        ids: z.array(z.uuid()).min(1),
+        status: z.enum(STATUS_VALUES),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return db.transaction(async (tx) => {
+        const existing = await tx
+          .select({ id: jobApplications.id, status: jobApplications.status })
+          .from(jobApplications)
+          .where(
+            and(
+              inArray(jobApplications.id, input.ids),
+              eq(jobApplications.userId, ctx.session.user.id),
+            ),
+          );
+
+        const changedIds = existing
+          .filter((job) => job.status !== input.status)
+          .map((job) => job.id);
+
+        if (changedIds.length > 0) {
+          await tx
+            .update(jobApplications)
+            .set({ status: input.status, updatedAt: new Date() })
+            .where(
+              and(
+                inArray(jobApplications.id, changedIds),
+                eq(jobApplications.userId, ctx.session.user.id),
+              ),
+            );
+
+          await tx.insert(jobStatusEvents).values(
+            changedIds.map((jobId) => ({
+              jobId,
+              userId: ctx.session.user.id,
+              status: input.status,
+            })),
+          );
+        }
+
+        return { updatedIds: existing.map((job) => job.id) };
+      });
     }),
 });

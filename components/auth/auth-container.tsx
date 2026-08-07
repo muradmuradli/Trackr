@@ -26,6 +26,13 @@ const AuthContainer = () => {
     });
   };
 
+  const handleGitHubSignIn = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/dashboard",
+    });
+  };
+
   return (
     <div className="bg-card p-6 rounded-2xl w-full max-w-md h-fit shadow-xl border border-border">
       {justVerified && (
@@ -82,7 +89,7 @@ const AuthContainer = () => {
             <Button
               variant="outline"
               className="w-6/12 px-2 py-4 rounded-lg text-sm flex items-center"
-              onClick={() => console.log("github")}
+              onClick={handleGitHubSignIn}
             >
               <GitHubIcon className="h-4 w-4" />
               GitHub
