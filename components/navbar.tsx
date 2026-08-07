@@ -44,7 +44,7 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
           <ThemeToggle />
 
           {session && (
-            <>
+            <div className="flex items-center">
               <Button
                 variant="ghost"
                 className="text-slate-600 dark:text-slate-300"
@@ -59,7 +59,14 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
               >
                 <Link href="/dashboard/board">Board</Link>
               </Button>
-            </>
+              <Button
+                variant="ghost"
+                className="text-slate-600 dark:text-slate-300"
+                asChild
+              >
+                <Link href="/dashboard/analytics">Analytics</Link>
+              </Button>
+            </div>
           )}
 
           {session ? (
@@ -90,6 +97,9 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard/board">Board</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/analytics">Analytics</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />

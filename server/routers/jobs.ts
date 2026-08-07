@@ -1,5 +1,16 @@
 import { z } from "zod";
-import { eq, and, asc, desc, ilike, inArray, or, count } from "drizzle-orm";
+import {
+  eq,
+  and,
+  asc,
+  desc,
+  ilike,
+  inArray,
+  or,
+  count,
+  countDistinct,
+  sql,
+} from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 import { db } from "@/db";
 import { jobApplications, jobStatusEvents } from "@/db/schema";
@@ -13,6 +24,8 @@ const STATUS_VALUES = [
   "rejected",
   "withdrawn",
 ] as const;
+
+const FUNNEL_STAGES = ["saved", "applied", "interview", "offer"] as const;
 
 const jobSchema = z.object({
   companyName: z.string().min(1),
@@ -46,6 +59,31 @@ export const jobsRouter = router({
         });
 
         return application;
+      });
+    }),
+
+  // The client parses and coerces the CSV into well-formed rows before
+  // sending them here, so this stays a plain array validation — bad input
+  // (e.g. a hand-edited payload bypassing the client) fails the whole batch,
+  // which is fine since malformed rows never come from the CSV importer itself.
+  bulkImport: protectedProcedure
+    .input(z.array(jobSchema).min(1).max(500))
+    .mutation(async ({ ctx, input }) => {
+      return db.transaction(async (tx) => {
+        const inserted = await tx
+          .insert(jobApplications)
+          .values(input.map((job) => ({ ...job, userId: ctx.session.user.id })))
+          .returning();
+
+        await tx.insert(jobStatusEvents).values(
+          inserted.map((job) => ({
+            jobId: job.id,
+            userId: ctx.session.user.id,
+            status: job.status,
+          })),
+        );
+
+        return { count: inserted.length };
       });
     }),
 
@@ -103,6 +141,56 @@ export const jobsRouter = router({
       submitted === 0 ? 0 : Math.round((responded / submitted) * 100);
 
     return { total, active, interviewing, responseRate };
+  }),
+
+  analytics: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const month = sql<string>`to_char(${jobApplications.date}, 'YYYY-MM')`;
+
+    const [byMonthRows, funnelRows, distributionRows] = await Promise.all([
+      db
+        .select({ month, count: count() })
+        .from(jobApplications)
+        .where(eq(jobApplications.userId, userId))
+        .groupBy(month)
+        .orderBy(month),
+      db
+        .select({
+          status: jobStatusEvents.status,
+          count: countDistinct(jobStatusEvents.jobId),
+        })
+        .from(jobStatusEvents)
+        .where(
+          and(
+            eq(jobStatusEvents.userId, userId),
+            inArray(jobStatusEvents.status, FUNNEL_STAGES),
+          ),
+        )
+        .groupBy(jobStatusEvents.status),
+      db
+        .select({ status: jobApplications.status, count: count() })
+        .from(jobApplications)
+        .where(eq(jobApplications.userId, userId))
+        .groupBy(jobApplications.status),
+    ]);
+
+    const funnelByStage = Object.fromEntries(
+      funnelRows.map((row) => [row.status, row.count]),
+    );
+    const funnel = FUNNEL_STAGES.map((stage) => ({
+      stage,
+      count: funnelByStage[stage] ?? 0,
+    }));
+
+    const distributionByStatus = Object.fromEntries(
+      distributionRows.map((row) => [row.status, row.count]),
+    );
+    const distribution = STATUS_VALUES.map((status) => ({
+      status,
+      count: distributionByStatus[status] ?? 0,
+    }));
+
+    return { byMonth: byMonthRows, funnel, distribution };
   }),
 
   list: protectedProcedure

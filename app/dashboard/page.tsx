@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import AddJobButton from "@/components/dashboard/add-job-button";
 import ExportCsvButton from "@/components/dashboard/export-csv-button";
+import ImportCsvButton from "@/components/dashboard/import-csv-button";
 import InfoPanels from "@/components/dashboard/info-panels";
 import JobsPagination from "@/components/dashboard/jobs-pagination";
 import JobsTable from "@/components/dashboard/jobs-table";
@@ -74,7 +75,10 @@ const Dashboard = () => {
               onStatusChange={setStatus}
             />
           </div>
-          <ExportCsvButton query={debouncedQuery} status={status} />
+          <div className="flex items-center gap-2">
+            <ImportCsvButton />
+            <ExportCsvButton query={debouncedQuery} status={status} />
+          </div>
         </div>
 
         <JobsPagination
