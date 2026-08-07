@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { jobApplications } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 
-const applicationSchema = z.object({
+const jobSchema = z.object({
   companyName: z.string().min(1),
   roleTitle: z.string().min(1),
   jobUrl: z.url().optional().or(z.literal("")),
@@ -26,7 +26,7 @@ const applicationSchema = z.object({
 
 export const jobsRouter = router({
   create: protectedProcedure
-    .input(applicationSchema)
+    .input(jobSchema)
     .mutation(async ({ ctx, input }) => {
       const [application] = await db
         .insert(jobApplications)
@@ -119,40 +119,40 @@ export const jobsRouter = router({
       };
     }),
 
-  //   update: protectedProcedure
-  //     .input(applicationSchema.partial().extend({ id: z.uuid() }))
-  //     .mutation(async ({ ctx, input }) => {
-  //       const { id, ...data } = input;
+  update: protectedProcedure
+    .input(jobSchema.extend({ id: z.uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
 
-  //       const [updated] = await db
-  //         .update(jobApplications)
-  //         .set({ ...data, updatedAt: new Date() })
-  //         .where(
-  //           and(
-  //             eq(jobApplications.id, id),
-  //             eq(jobApplications.userId, ctx.session.user.id)
-  //           )
-  //         )
-  //         .returning();
+      const [updated] = await db
+        .update(jobApplications)
+        .set({ ...data, updatedAt: new Date() })
+        .where(
+          and(
+            eq(jobApplications.id, id),
+            eq(jobApplications.userId, ctx.session.user.id),
+          ),
+        )
+        .returning();
 
-  //       if (!updated) throw new TRPCError({ code: "NOT_FOUND" });
-  //       return updated;
-  //     }),
+      if (!updated) throw new TRPCError({ code: "NOT_FOUND" });
+      return updated;
+    }),
 
-  //   delete: protectedProcedure
-  //     .input(z.object({ id: z.uuid() }))
-  //     .mutation(async ({ ctx, input }) => {
-  //       const [deleted] = await db
-  //         .delete(jobApplications)
-  //         .where(
-  //           and(
-  //             eq(jobApplications.id, input.id),
-  //             eq(jobApplications.userId, ctx.session.user.id)
-  //           )
-  //         )
-  //         .returning();
+  delete: protectedProcedure
+    .input(z.object({ id: z.uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const [deleted] = await db
+        .delete(jobApplications)
+        .where(
+          and(
+            eq(jobApplications.id, input.id),
+            eq(jobApplications.userId, ctx.session.user.id),
+          ),
+        )
+        .returning();
 
-  //       if (!deleted) throw new TRPCError({ code: "NOT_FOUND" });
-  //       return deleted;
-  //     }),
+      if (!deleted) throw new TRPCError({ code: "NOT_FOUND" });
+      return deleted;
+    }),
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import AddApplication from "@/components/dashboard/add-application";
+import AddJobButton from "@/components/dashboard/add-job-button";
 import InfoPanels from "@/components/dashboard/info-panels";
 import JobsPagination from "@/components/dashboard/jobs-pagination";
 import JobsTable from "@/components/dashboard/jobs-table";
@@ -55,7 +55,7 @@ const Dashboard = () => {
               Your pipeline, from saved roles to signed offers
             </span>
           </div>
-          <AddApplication />
+          <AddJobButton />
         </div>
 
         <InfoPanels />

@@ -16,13 +16,17 @@ import Logo from "@/components/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import { authClient } from "@/lib/auth-client";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getInitials } from "@/lib/utils";
 import ThemeToggle from "@/components/theme-toggle";
+import type { Session } from "@/lib/auth";
 
-const Navbar = () => {
+const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
   const router = useRouter();
-  const { data: session, isPending } = authClient.useSession();
+  const { data: clientSession, isPending } = authClient.useSession();
+  // Trust the server-resolved session for the first paint so logged-out
+  // visitors see the real nav immediately instead of a loading skeleton;
+  // once the client hook settles, its value takes over for reactivity.
+  const session = isPending ? initialSession : clientSession;
 
   const handleSignOut = async () => {
     await authClient.signOut();
@@ -39,12 +43,17 @@ const Navbar = () => {
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
 
-          {isPending ? (
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-9 w-9 rounded-full" />
-              <Skeleton className="h-4 w-20 rounded" />
-            </div>
-          ) : session ? (
+          {session && (
+            <Button
+              variant="ghost"
+              className="text-slate-600 dark:text-slate-300"
+              asChild
+            >
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          )}
+
+          {session ? (
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Field,
@@ -35,14 +36,17 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn, trpc } from "@/lib/utils";
 import { STATUS_OPTIONS, SOURCE_OPTIONS } from "@/lib/application";
+import type { RouterOutputs } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const applicationSchema = z
+type Job = RouterOutputs["jobs"]["list"]["items"][number];
+
+const jobSchema = z
   .object({
     companyName: z.string().min(1, "Company name is required"),
     roleTitle: z.string().min(1, "Role title is required"),
@@ -70,62 +74,145 @@ const applicationSchema = z
     },
   );
 
-const AddApplication = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const utils = trpc.useUtils();
+const emptyDefaults: z.infer<typeof jobSchema> = {
+  companyName: "",
+  roleTitle: "",
+  jobUrl: "",
+  status: "saved",
+  date: undefined as unknown as Date,
+  source: "linkedin",
+  salaryMin: undefined,
+  salaryMax: undefined,
+  notes: "",
+};
 
+function jobToDefaults(job: Job): z.infer<typeof jobSchema> {
+  return {
+    companyName: job.companyName,
+    roleTitle: job.roleTitle,
+    jobUrl: job.jobUrl ?? "",
+    status: job.status,
+    date: new Date(job.date),
+    source: job.source,
+    salaryMin: job.salaryMin ?? undefined,
+    salaryMax: job.salaryMax ?? undefined,
+    notes: job.notes ?? "",
+  };
+}
+
+type JobFormDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  job?: Job;
+};
+
+const JobFormDialog = ({ open, onOpenChange, job }: JobFormDialogProps) => {
+  const isEditing = !!job;
+  const formId = useId();
+  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof applicationSchema>>({
-    resolver: zodResolver(applicationSchema),
-    defaultValues: {
-      companyName: "",
-      roleTitle: "",
-      jobUrl: "",
-      status: "saved",
-      date: undefined,
-      source: "linkedin",
-      salaryMin: undefined,
-      salaryMax: undefined,
-      notes: "",
-    },
+  const form = useForm<z.infer<typeof jobSchema>>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: emptyDefaults,
   });
+
+  useEffect(() => {
+    if (!open) return;
+    form.reset(job ? jobToDefaults(job) : emptyDefaults);
+    // form.reset is stable across renders; only re-sync when the dialog opens or the target job changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, job?.id]);
 
   const createMutation = trpc.jobs.create.useMutation({
     onSuccess: () => {
-      utils.jobs.list.invalidate(); // refetches the list after a successful create
+      utils.jobs.list.invalidate();
+      utils.jobs.stats.invalidate();
+      toast.success("Job added successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to add job. Please try again.");
     },
   });
 
-  async function onSubmit(data: z.infer<typeof applicationSchema>) {
+  const updateMutation = trpc.jobs.update.useMutation({
+    onMutate: async (updated) => {
+      const listKey = getQueryKey(trpc.jobs.list);
+      await queryClient.cancelQueries({ queryKey: listKey });
+
+      const previousQueries = queryClient.getQueriesData({
+        queryKey: listKey,
+      });
+
+      queryClient.setQueriesData(
+        { queryKey: listKey },
+        (old: RouterOutputs["jobs"]["list"] | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((item) =>
+              item.id === updated.id ? { ...item, ...updated } : item,
+            ),
+          };
+        },
+      );
+
+      return { previousQueries };
+    },
+    onError: (_error, _variables, context) => {
+      context?.previousQueries?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+      toast.error("Failed to update job. Please try again.");
+    },
+    onSuccess: (updatedJob) => {
+      // Reconcile with the authoritative server row in place — no invalidate/refetch,
+      // so the table never flashes a loading skeleton after an already-applied optimistic update.
+      const listKey = getQueryKey(trpc.jobs.list);
+      queryClient.setQueriesData(
+        { queryKey: listKey },
+        (old: RouterOutputs["jobs"]["list"] | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((item) =>
+              item.id === updatedJob.id ? updatedJob : item,
+            ),
+          };
+        },
+      );
+      utils.jobs.stats.invalidate();
+      toast.success("Job updated successfully!");
+    },
+  });
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
+
+  async function onSubmit(data: z.infer<typeof jobSchema>) {
     try {
-      await createMutation.mutateAsync(data);
+      if (job) {
+        await updateMutation.mutateAsync({ id: job.id, ...data });
+      } else {
+        await createMutation.mutateAsync(data);
+      }
       form.reset();
-      setIsDialogOpen(false);
-      toast.success("Application added successfully!");
+      onOpenChange(false);
     } catch (error) {
       console.error(error);
     }
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <form id="application-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTrigger asChild>
-          <Button
-            onClick={() => setIsDialogOpen(true)}
-            className="bg-blue-700 hover:bg-blue-600 hover:text-white text-white px-8 py-5"
-            variant="outline"
-          >
-            <Plus />
-            Add Application
-          </Button>
-        </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <form id={formId} onSubmit={form.handleSubmit(onSubmit)}>
         <DialogContent className="sm:max-w-lg px-5 py-6 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Application</DialogTitle>
+            <DialogTitle>{isEditing ? "Edit Job" : "Add Job"}</DialogTitle>
             <DialogDescription>
-              Track a new job application. Click save when you&apos;re done.
+              {isEditing
+                ? "Update the details of this job."
+                : "Track a new job. Click save when you're done."}
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>
@@ -388,7 +475,7 @@ const AddApplication = () => {
                     {...field}
                     id="notes"
                     aria-invalid={fieldState.invalid}
-                    placeholder="Any details you want to remember about this application..."
+                    placeholder="Any details you want to remember about this job..."
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -400,17 +487,17 @@ const AddApplication = () => {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" disabled={createMutation.isPending}>
+              <Button variant="outline" disabled={isPending}>
                 Cancel
               </Button>
             </DialogClose>
             <Button
               type="submit"
-              form="application-form"
-              disabled={createMutation.isPending}
+              form={formId}
+              disabled={isPending}
               className="bg-blue-700 hover:bg-blue-600 text-white"
             >
-              {createMutation.isPending ? "Saving..." : "Save changes"}
+              {isPending ? "Saving..." : "Save changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -419,4 +506,4 @@ const AddApplication = () => {
   );
 };
 
-export default AddApplication;
+export default JobFormDialog;
