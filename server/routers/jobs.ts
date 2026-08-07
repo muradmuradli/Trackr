@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { eq, and, desc, ilike, or, count } from "drizzle-orm";
+import { eq, and, asc, desc, ilike, or, count } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 import { db } from "@/db";
-import { jobApplications } from "@/db/schema";
+import { jobApplications, jobStatusEvents } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 
 const jobSchema = z.object({
@@ -28,15 +28,23 @@ export const jobsRouter = router({
   create: protectedProcedure
     .input(jobSchema)
     .mutation(async ({ ctx, input }) => {
-      const [application] = await db
-        .insert(jobApplications)
-        .values({
-          ...input,
-          userId: ctx.session.user.id,
-        })
-        .returning();
+      return db.transaction(async (tx) => {
+        const [application] = await tx
+          .insert(jobApplications)
+          .values({
+            ...input,
+            userId: ctx.session.user.id,
+          })
+          .returning();
 
-      return application;
+        await tx.insert(jobStatusEvents).values({
+          jobId: application.id,
+          userId: ctx.session.user.id,
+          status: application.status,
+        });
+
+        return application;
+      });
     }),
 
   getById: protectedProcedure
@@ -55,6 +63,21 @@ export const jobsRouter = router({
 
       if (!job) throw new TRPCError({ code: "NOT_FOUND" });
       return job;
+    }),
+
+  getTimeline: protectedProcedure
+    .input(z.object({ jobId: z.uuid() }))
+    .query(async ({ ctx, input }) => {
+      return db
+        .select()
+        .from(jobStatusEvents)
+        .where(
+          and(
+            eq(jobStatusEvents.jobId, input.jobId),
+            eq(jobStatusEvents.userId, ctx.session.user.id),
+          ),
+        )
+        .orderBy(asc(jobStatusEvents.createdAt));
     }),
 
   stats: protectedProcedure.query(async ({ ctx }) => {
@@ -142,19 +165,41 @@ export const jobsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
-      const [updated] = await db
-        .update(jobApplications)
-        .set({ ...data, updatedAt: new Date() })
-        .where(
-          and(
-            eq(jobApplications.id, id),
-            eq(jobApplications.userId, ctx.session.user.id),
-          ),
-        )
-        .returning();
+      return db.transaction(async (tx) => {
+        const [existing] = await tx
+          .select({ status: jobApplications.status })
+          .from(jobApplications)
+          .where(
+            and(
+              eq(jobApplications.id, id),
+              eq(jobApplications.userId, ctx.session.user.id),
+            ),
+          )
+          .limit(1);
 
-      if (!updated) throw new TRPCError({ code: "NOT_FOUND" });
-      return updated;
+        if (!existing) throw new TRPCError({ code: "NOT_FOUND" });
+
+        const [updated] = await tx
+          .update(jobApplications)
+          .set({ ...data, updatedAt: new Date() })
+          .where(
+            and(
+              eq(jobApplications.id, id),
+              eq(jobApplications.userId, ctx.session.user.id),
+            ),
+          )
+          .returning();
+
+        if (existing.status !== data.status) {
+          await tx.insert(jobStatusEvents).values({
+            jobId: id,
+            userId: ctx.session.user.id,
+            status: data.status,
+          });
+        }
+
+        return updated;
+      });
     }),
 
   delete: protectedProcedure

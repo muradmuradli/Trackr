@@ -29,6 +29,13 @@
       "when": 1786115225090,
       "tag": "0003_purple_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786116672265,
+      "tag": "0004_common_roland_deschain",
+      "breakpoints": true
     }
   ]
 }

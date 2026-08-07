@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import JobDocuments from "@/components/dashboard/job-documents";
 import JobFormDialog from "@/components/dashboard/job-form-dialog";
+import JobStatusTimeline from "@/components/dashboard/job-status-timeline";
 import {
   SOURCE_LABELS,
   STATUS_BADGE_CLASSES,
@@ -141,9 +142,13 @@ const JobDetailsPage = () => {
             <Skeleton className="h-4 w-28" />
           </div>
         </div>
-        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-6">
-          <Skeleton className="h-56 rounded-xl" />
-          <Skeleton className="h-56 rounded-xl" />
+        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+          <div className="grid gap-4 lg:gap-6">
+            <Skeleton className="h-40 rounded-xl" />
+            <Skeleton className="h-40 rounded-xl" />
+            <Skeleton className="h-40 rounded-xl" />
+          </div>
+          <Skeleton className="h-64 rounded-xl" />
         </div>
       </main>
     );
@@ -236,78 +241,80 @@ const JobDetailsPage = () => {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-6">
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-            <h2 className="text-sm font-semibold">Overview</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="Status">
-                <Badge
-                  className={cn(
-                    "border-transparent",
-                    STATUS_BADGE_CLASSES[job.status],
-                  )}
-                >
-                  {STATUS_LABELS[job.status]}
-                </Badge>
-              </Field>
-              <Field label="Applied date">
-                {format(new Date(job.date), "MMM d, yyyy")}
-              </Field>
-              <Field label="Source">{SOURCE_LABELS[job.source]}</Field>
-              <Field label="Salary range">
-                {formatSalary(job.salaryMin, job.salaryMax)}
-              </Field>
-              <div className="sm:col-span-2">
-                <Field label="Job URL">
-                  {job.jobUrl ? (
-                    <a
-                      href={job.jobUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-blue-700 hover:underline dark:text-blue-400"
-                    >
-                      <span className="truncate">{job.jobUrl}</span>
-                      <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0" />
-                    </a>
-                  ) : (
-                    "—"
-                  )}
+        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+          <div className="grid gap-4 lg:gap-6">
+            <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+              <h2 className="text-sm font-semibold">Overview</h2>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <Field label="Status">
+                  <Badge
+                    className={cn(
+                      "border-transparent",
+                      STATUS_BADGE_CLASSES[job.status],
+                    )}
+                  >
+                    {STATUS_LABELS[job.status]}
+                  </Badge>
                 </Field>
+                <Field label="Applied date">
+                  {format(new Date(job.date), "MMM d, yyyy")}
+                </Field>
+                <Field label="Source">{SOURCE_LABELS[job.source]}</Field>
+                <Field label="Salary range">
+                  {formatSalary(job.salaryMin, job.salaryMax)}
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label="Job URL">
+                    {job.jobUrl ? (
+                      <a
+                        href={job.jobUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-blue-700 hover:underline dark:text-blue-400"
+                      >
+                        <span className="truncate">{job.jobUrl}</span>
+                        <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0" />
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </Field>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <section className="h-fit rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-            <h2 className="text-sm font-semibold">Notes</h2>
-            <Textarea
-              rows={6}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Interview prep, recruiter contacts, follow-up dates…"
-              className="mt-3 resize-y"
-            />
-            <div className="mt-3 flex items-center gap-3">
-              <Button
-                size="sm"
-                onClick={saveNotes}
-                disabled={
-                  notes === (job.notes ?? "") || saveNotesMutation.isPending
-                }
-                className="bg-blue-700 hover:bg-blue-600 text-white"
-              >
-                {saveNotesMutation.isPending ? "Saving..." : "Save notes"}
-              </Button>
-              {saved && (
-                <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  <CheckIcon className="h-3.5 w-3.5" /> Saved
-                </span>
-              )}
-            </div>
-          </section>
-        </div>
+            <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+              <h2 className="text-sm font-semibold">Notes</h2>
+              <Textarea
+                rows={6}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Interview prep, recruiter contacts, follow-up dates…"
+                className="mt-3 resize-y"
+              />
+              <div className="mt-3 flex items-center gap-3">
+                <Button
+                  size="sm"
+                  onClick={saveNotes}
+                  disabled={
+                    notes === (job.notes ?? "") || saveNotesMutation.isPending
+                  }
+                  className="bg-blue-700 hover:bg-blue-600 text-white"
+                >
+                  {saveNotesMutation.isPending ? "Saving..." : "Save notes"}
+                </Button>
+                {saved && (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                    <CheckIcon className="h-3.5 w-3.5" /> Saved
+                  </span>
+                )}
+              </div>
+            </section>
 
-        <div className="mt-4 lg:mt-6">
-          <JobDocuments jobId={job.id} />
+            <JobDocuments jobId={job.id} />
+          </div>
+
+          <JobStatusTimeline jobId={job.id} />
         </div>
 
         <JobFormDialog open={editOpen} onOpenChange={setEditOpen} job={job} />

@@ -45,6 +45,20 @@ export const jobApplications = pgTable("job_applications", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const jobStatusEvents = pgTable("job_status_events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  jobId: uuid("job_id")
+    .notNull()
+    .references(() => jobApplications.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  status: statusEnum("status").notNull(),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const jobDocuments = pgTable("job_documents", {
   id: uuid("id").primaryKey().defaultRandom(),
   jobId: uuid("job_id")

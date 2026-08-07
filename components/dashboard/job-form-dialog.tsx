@@ -184,6 +184,7 @@ const JobFormDialog = ({ open, onOpenChange, job }: JobFormDialogProps) => {
       );
       utils.jobs.getById.setData({ id: updatedJob.id }, updatedJob);
       utils.jobs.stats.invalidate();
+      utils.jobs.getTimeline.invalidate({ jobId: updatedJob.id });
       toast.success("Job updated successfully!");
     },
   });
