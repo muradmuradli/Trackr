@@ -22,6 +22,13 @@
       "when": 1785850054679,
       "tag": "0002_freezing_dracula",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786115225090,
+      "tag": "0003_purple_hydra",
+      "breakpoints": true
     }
   ]
 }

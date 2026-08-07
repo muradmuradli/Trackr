@@ -33,7 +33,8 @@ import {
 import { cn, getInitials, trpc } from "@/lib/utils";
 import type { RouterOutputs } from "@/types";
 import { format } from "date-fns";
-import { LinkIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 type Job = RouterOutputs["jobs"]["list"]["items"][number];
@@ -155,9 +156,12 @@ const JobsTable = ({ jobs }: { jobs: Job[] }) => {
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      aria-label="Open job link"
+                      aria-label="View job details"
+                      asChild
                     >
-                      <LinkIcon className="size-3.5" />
+                      <Link href={`/dashboard/jobs/${job.id}`}>
+                        <EyeIcon className="size-3.5" />
+                      </Link>
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>

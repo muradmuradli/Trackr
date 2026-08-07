@@ -39,6 +39,24 @@ export const jobsRouter = router({
       return application;
     }),
 
+  getById: protectedProcedure
+    .input(z.object({ id: z.uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [job] = await db
+        .select()
+        .from(jobApplications)
+        .where(
+          and(
+            eq(jobApplications.id, input.id),
+            eq(jobApplications.userId, ctx.session.user.id),
+          ),
+        )
+        .limit(1);
+
+      if (!job) throw new TRPCError({ code: "NOT_FOUND" });
+      return job;
+    }),
+
   stats: protectedProcedure.query(async ({ ctx }) => {
     const rows = await db
       .select({ status: jobApplications.status, count: count() })
