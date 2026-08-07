@@ -41,6 +41,11 @@ export const jobApplications = pgTable("job_applications", {
   salaryMax: integer("salary_max"),
   notes: text("notes"),
 
+  // Set whenever a follow-up reminder email mentions this job, so the daily
+  // cron doesn't re-flag the same stale job every day — only after it's
+  // been quiet again for another full cooldown period.
+  lastReminderSentAt: timestamp("last_reminder_sent_at"),
+
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
