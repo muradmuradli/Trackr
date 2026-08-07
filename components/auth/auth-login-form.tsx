@@ -48,7 +48,7 @@ export function AuthLoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/dashboard?welcome=true");
   }
 
   return (

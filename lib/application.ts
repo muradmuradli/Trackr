@@ -36,3 +36,12 @@ export const STATUS_BADGE_CLASSES: Record<ApplicationStatus, string> = {
   rejected: "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400",
   withdrawn: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400",
 };
+
+export const STATUS_DOT_CLASSES: Record<ApplicationStatus, string> = {
+  saved: "bg-slate-400",
+  applied: "bg-blue-500",
+  interview: "bg-amber-500",
+  offer: "bg-emerald-500",
+  rejected: "bg-red-500",
+  withdrawn: "bg-zinc-400",
+};

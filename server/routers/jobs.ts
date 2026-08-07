@@ -186,6 +186,17 @@ export const jobsRouter = router({
         .limit(5000);
     }),
 
+  // Unpaginated, like exportAll — the board renders every job at once,
+  // grouped into status columns, so there's no page to fetch.
+  board: protectedProcedure.query(async ({ ctx }) => {
+    return db
+      .select()
+      .from(jobApplications)
+      .where(eq(jobApplications.userId, ctx.session.user.id))
+      .orderBy(desc(jobApplications.createdAt))
+      .limit(1000);
+  }),
+
   update: protectedProcedure
     .input(jobSchema.extend({ id: z.uuid() }))
     .mutation(async ({ ctx, input }) => {

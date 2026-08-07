@@ -22,14 +22,14 @@ const AuthContainer = () => {
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard", // where to land after successful auth
+      callbackURL: "/dashboard?welcome=true", // where to land after successful auth
     });
   };
 
   const handleGitHubSignIn = async () => {
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/dashboard",
+      callbackURL: "/dashboard?welcome=true",
     });
   };
 

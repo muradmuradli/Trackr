@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import AddJobButton from "@/components/dashboard/add-job-button";
 import ExportCsvButton from "@/components/dashboard/export-csv-button";
 import InfoPanels from "@/components/dashboard/info-panels";
@@ -7,8 +8,8 @@ import JobsPagination from "@/components/dashboard/jobs-pagination";
 import JobsTable from "@/components/dashboard/jobs-table";
 import JobsTableSkeleton from "@/components/dashboard/jobs-table-skeleton";
 import Search, { StatusFilter } from "@/components/dashboard/search";
+import WelcomeToast from "@/components/dashboard/welcome-toast";
 import { trpc } from "@/lib/utils";
-import { useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
@@ -48,6 +49,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 w-full flex justify-center dark:bg-slate-950">
+      <Suspense>
+        <WelcomeToast />
+      </Suspense>
       <div className="w-full max-w-6xl px-4 my-6 sm:px-6 sm:my-10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

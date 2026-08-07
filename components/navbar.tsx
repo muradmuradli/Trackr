@@ -44,13 +44,22 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
           <ThemeToggle />
 
           {session && (
-            <Button
-              variant="ghost"
-              className="text-slate-600 dark:text-slate-300"
-              asChild
-            >
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                className="text-slate-600 dark:text-slate-300"
+                asChild
+              >
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-slate-600 dark:text-slate-300"
+                asChild
+              >
+                <Link href="/dashboard/board">Board</Link>
+              </Button>
+            </>
           )}
 
           {session ? (
@@ -78,6 +87,9 @@ const Navbar = ({ initialSession = null }: { initialSession?: Session }) => {
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/board">Board</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
