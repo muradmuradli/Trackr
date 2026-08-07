@@ -32,7 +32,11 @@ const StatusDistributionChart = ({ data }: { data: StatusCount[] }) => {
       description="Where your tracked applications stand today"
       chart={
         <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            initialDimension={{ width: 400, height: 256 }}
+          >
             <BarChart
               data={data}
               layout="vertical"

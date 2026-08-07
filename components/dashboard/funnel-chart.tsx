@@ -31,7 +31,11 @@ const FunnelChart = ({ data }: { data: FunnelStage[] }) => {
       description="How far applications get, saved through offer"
       chart={
         <div className="h-56 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            initialDimension={{ width: 400, height: 224 }}
+          >
             <BarChart
               data={data}
               layout="vertical"

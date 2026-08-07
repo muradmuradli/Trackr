@@ -46,7 +46,11 @@ const ApplicationsOverTimeChart = ({ data }: { data: MonthCount[] }) => {
       description="How many roles you've added, by month"
       chart={
         <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            initialDimension={{ width: 400, height: 256 }}
+          >
             <AreaChart data={data} margin={{ top: 8, right: 8, left: -16 }}>
               <CartesianGrid
                 stroke={gridStroke}
