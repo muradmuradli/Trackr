@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => {
   return (
     <footer className="border-t border-slate-200 dark:border-slate-800">
@@ -9,15 +11,24 @@ const Footer = () => {
           <span>© 2026 Trackr</span>
         </div>
         <nav className="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
-          <a href="#" className="hover:text-slate-700 dark:hover:text-slate-200">
+          <Link
+            href="/about"
+            className="hover:text-slate-700 dark:hover:text-slate-200"
+          >
             About
-          </a>
-          <a href="#" className="hover:text-slate-700 dark:hover:text-slate-200">
+          </Link>
+          <Link
+            href="/contact"
+            className="hover:text-slate-700 dark:hover:text-slate-200"
+          >
             Contact
-          </a>
-          <a href="#" className="hover:text-slate-700 dark:hover:text-slate-200">
+          </Link>
+          <Link
+            href="/privacy"
+            className="hover:text-slate-700 dark:hover:text-slate-200"
+          >
             Privacy
-          </a>
+          </Link>
         </nav>
       </div>
     </footer>

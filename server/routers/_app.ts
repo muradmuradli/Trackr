@@ -3,12 +3,14 @@ import { jobsRouter } from "./jobs";
 import { documentsRouter } from "./documents";
 import { profileRouter } from "./profile";
 import { authRouter } from "./auth";
+import { contactRouter } from "./contact";
 
 export const appRouter = router({
   jobs: jobsRouter,
   documents: documentsRouter,
   profile: profileRouter,
   auth: authRouter,
+  contact: contactRouter,
 });
 
 export type AppRouter = typeof appRouter;
