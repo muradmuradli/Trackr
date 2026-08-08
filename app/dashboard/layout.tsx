@@ -1,5 +1,6 @@
 // app/dashboard/layout.tsx
 import Navbar from "@/components/navbar";
+import ChatWidget from "@/components/dashboard/chat-widget";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -15,6 +16,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     <>
       <Navbar initialSession={session} />
       {children}
+      <ChatWidget />
     </>
   );
 };

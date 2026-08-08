@@ -16,7 +16,7 @@ import { db } from "@/db";
 import { jobApplications, jobStatusEvents } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 
-const STATUS_VALUES = [
+export const STATUS_VALUES = [
   "saved",
   "applied",
   "interview",
