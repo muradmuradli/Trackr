@@ -1,4 +1,5 @@
 import AuthContainer from "@/components/auth/auth-container";
+import DemoLoginPanel from "@/components/auth/demo-login-panel";
 import Logo from "@/components/logo";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -21,6 +22,8 @@ const Auth = async () => {
       <Suspense>
         <AuthContainer />
       </Suspense>
+
+      <DemoLoginPanel />
 
       <Link
         href="/"
