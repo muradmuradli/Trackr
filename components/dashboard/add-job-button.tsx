@@ -13,7 +13,6 @@ const AddJobButton = () => {
       <Button
         onClick={() => setOpen(true)}
         className="bg-blue-700 hover:bg-blue-600 hover:text-white text-white px-8 py-5"
-        variant="outline"
       >
         <Plus />
         Add Job

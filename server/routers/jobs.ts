@@ -15,15 +15,7 @@ import { protectedProcedure, router } from "../trpc";
 import { db } from "@/db";
 import { jobApplications, jobStatusEvents } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
-
-export const STATUS_VALUES = [
-  "saved",
-  "applied",
-  "interview",
-  "offer",
-  "rejected",
-  "withdrawn",
-] as const;
+import { STATUS_VALUES } from "@/lib/application";
 
 const FUNNEL_STAGES = ["saved", "applied", "interview", "offer"] as const;
 

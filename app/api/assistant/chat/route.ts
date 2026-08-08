@@ -11,8 +11,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { auth } from "@/lib/auth";
 import { createCaller } from "@/server/routers/_app";
-import { STATUS_VALUES } from "@/server/routers/jobs";
-import { SOURCE_LABELS, STATUS_LABELS } from "@/lib/application";
+import { SOURCE_LABELS, STATUS_LABELS, STATUS_VALUES } from "@/lib/application";
 
 export const maxDuration = 30;
 

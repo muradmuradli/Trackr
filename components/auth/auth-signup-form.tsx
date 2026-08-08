@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { authClient } from "@/lib/auth-client";
 import { UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
 export function AuthSignupForm() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export function AuthSignupForm() {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error(error.message ?? "Failed to sign up. Please try again.");
       return;
     }
 

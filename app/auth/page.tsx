@@ -2,8 +2,17 @@ import AuthContainer from "@/components/auth/auth-container";
 import Logo from "@/components/logo";
 import Link from "next/link";
 import { Suspense } from "react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
-const Auth = () => {
+const Auth = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex flex-col items-center justify-center gap-4 h-screen bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
       <Link href="/">

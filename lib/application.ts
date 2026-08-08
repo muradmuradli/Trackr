@@ -16,6 +16,15 @@ export const SOURCE_OPTIONS = [
 export type ApplicationStatus = (typeof STATUS_OPTIONS)[number]["value"];
 export type ApplicationSource = (typeof SOURCE_OPTIONS)[number]["value"];
 
+// The single source of truth for the status enum's literal values — every
+// z.enum(...) and hand-rolled status list in the app should derive from
+// this (or STATUS_OPTIONS) rather than re-listing the six strings, so they
+// can't drift out of sync with each other or with the database enum.
+export const STATUS_VALUES = STATUS_OPTIONS.map((option) => option.value) as [
+  ApplicationStatus,
+  ...ApplicationStatus[],
+];
+
 export const STATUS_LABELS: Record<ApplicationStatus, string> =
   Object.fromEntries(
     STATUS_OPTIONS.map((option) => [option.value, option.label]),

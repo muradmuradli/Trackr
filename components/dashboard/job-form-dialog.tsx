@@ -35,7 +35,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn, trpc } from "@/lib/utils";
-import { STATUS_OPTIONS, SOURCE_OPTIONS } from "@/lib/application";
+import {
+  STATUS_OPTIONS,
+  SOURCE_OPTIONS,
+  STATUS_VALUES,
+} from "@/lib/application";
 import type { RouterOutputs } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -51,14 +55,7 @@ const jobSchema = z
     companyName: z.string().min(1, "Company name is required"),
     roleTitle: z.string().min(1, "Role title is required"),
     jobUrl: z.url({ message: "Invalid URL" }).optional().or(z.literal("")),
-    status: z.enum([
-      "saved",
-      "applied",
-      "interview",
-      "offer",
-      "rejected",
-      "withdrawn",
-    ]),
+    status: z.enum(STATUS_VALUES),
     date: z.date({ message: "Date is required" }),
     source: z.enum(["linkedin", "company_website", "other"]),
     salaryMin: z.number().positive().optional(),

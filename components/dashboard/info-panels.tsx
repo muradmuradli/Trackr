@@ -1,11 +1,11 @@
 import { trpc } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import StatTile from "@/components/dashboard/stat-tile";
 import {
   Briefcase,
   Activity,
   Users,
   TrendingUp,
-  type LucideIcon,
 } from "lucide-react";
 
 const InfoPanels = () => {
@@ -15,25 +15,25 @@ const InfoPanels = () => {
 
   return (
     <div className="w-full grid grid-cols-2 gap-4 sm:grid-cols-4 mt-8">
-      <InfoPanel
+      <StatTile
         title="Total Applications"
         content={data.total}
         subtitle="All tracked roles"
         icon={Briefcase}
       />
-      <InfoPanel
+      <StatTile
         title="Active"
         content={data.active}
         subtitle="Not rejected or withdrawn"
         icon={Activity}
       />
-      <InfoPanel
+      <StatTile
         title="Interviewing"
         content={data.interviewing}
         subtitle="Screens and interviews"
         icon={Users}
       />
-      <InfoPanel
+      <StatTile
         title="Response Rate"
         content={data.responseRate}
         suffix="%"
@@ -44,47 +44,13 @@ const InfoPanels = () => {
   );
 };
 
-const InfoPanel = ({
-  title,
-  content,
-  subtitle,
-  suffix = "",
-  icon: Icon,
-}: {
-  title: string;
-  content: number;
-  subtitle: string;
-  suffix?: string;
-  icon: LucideIcon;
-}) => {
-  return (
-    <div className="border rounded-lg p-4 flex flex-col gap-1 bg-white dark:bg-slate-900">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm text-slate-900 font-light dark:text-slate-100">
-          {title}
-        </h2>
-        <div className="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">
-          <Icon className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-        </div>
-      </div>
-      <span className="text-2xl font-semibold">
-        {content}
-        {suffix}
-      </span>
-      <span className="text-xs text-slate-400 dark:text-slate-500">
-        {subtitle}
-      </span>
-    </div>
-  );
-};
-
 export const InfoPanelsSkeleton = () => {
   return (
     <div className="w-full grid grid-cols-2 gap-4 sm:grid-cols-4 mt-8">
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="border rounded-lg p-4 flex flex-col gap-1 bg-white dark:bg-slate-900"
+          className="border border-slate-200 rounded-lg p-4 flex flex-col gap-1 bg-white dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-24" />

@@ -64,7 +64,7 @@ const ChatToolCard = ({
   if (part.state === "approval-requested" && part.approval) {
     const approvalId = part.approval.id;
     return (
-      <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-start gap-2">
           <PencilIcon className="mt-0.5 h-4 w-4 shrink-0 text-blue-700 dark:text-blue-400" />
           <span className="text-slate-700 dark:text-slate-200">
@@ -100,7 +100,7 @@ const ChatToolCard = ({
     part.state === "input-available"
   ) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
         <Loader2Icon className="h-3.5 w-3.5 shrink-0 animate-spin" />
         {describeProposal(part, jobLookup)}
       </div>
@@ -114,7 +114,7 @@ const ChatToolCard = ({
       <div
         className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
           failed
-            ? "border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+            ? "border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400"
             : "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-400"
         }`}
       >
@@ -130,7 +130,7 @@ const ChatToolCard = ({
 
   if (part.state === "output-denied") {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400">
         <XIcon className="h-4 w-4 shrink-0" />
         Declined: {describeProposal(part, jobLookup)}
       </div>

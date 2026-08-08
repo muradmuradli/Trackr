@@ -14,10 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { LogInIcon } from "lucide-react";
-import { trpc } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
@@ -44,7 +44,7 @@ export function AuthLoginForm() {
     });
 
     if (error) {
-      console.error(error.message);
+      toast.error(error.message ?? "Failed to log in. Please try again.");
       return;
     }
 

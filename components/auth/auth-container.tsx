@@ -34,14 +34,14 @@ const AuthContainer = () => {
   };
 
   return (
-    <div className="bg-card p-6 rounded-2xl w-full max-w-md h-fit shadow-xl border border-border">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl w-full max-w-md h-fit shadow-xl shadow-slate-300 dark:shadow-none border border-slate-200 dark:border-slate-800">
       {justVerified && (
-        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-green-500/10 dark:text-green-400">
+        <div className="bg-emerald-50 text-emerald-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-emerald-500/10 dark:text-emerald-400">
           Email verified! You can now log in.
         </div>
       )}
       {passwordReset && (
-        <div className="bg-green-50 text-green-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-green-500/10 dark:text-green-400">
+        <div className="bg-emerald-50 text-emerald-700 text-sm rounded-lg px-3 py-2 mb-4 text-center dark:bg-emerald-500/10 dark:text-emerald-400">
           Password reset! You can now log in.
         </div>
       )}
@@ -54,10 +54,10 @@ const AuthContainer = () => {
           transition={{ duration: 0.15 }}
         >
           <div className="flex flex-col items-center">
-            <h1 className="text-xl font-semibold text-foreground">
+            <h1 className="text-xl font-semibold">
               {isLogin ? "Welcome Back" : "Create your account"}
             </h1>
-            <span className="text-muted-foreground font-light text-[14px]">
+            <span className="text-slate-500 dark:text-slate-400 font-light text-[14px]">
               {isLogin
                 ? "Log in to keep track of your applications"
                 : "Start tracking your applications in seconds"}
@@ -69,11 +69,11 @@ const AuthContainer = () => {
           {isLogin ? <AuthLoginForm /> : <AuthSignupForm />}
 
           <div className="flex items-center gap-2 justify-center">
-            <div className="border-b border-border w-3/12"></div>
-            <span className="uppercase text-xs text-muted-foreground">
+            <div className="border-b border-slate-200 dark:border-slate-800 w-3/12"></div>
+            <span className="uppercase text-xs text-slate-500 dark:text-slate-400">
               or continue with
             </span>
-            <div className="border-b border-border w-3/12"></div>
+            <div className="border-b border-slate-200 dark:border-slate-800 w-3/12"></div>
           </div>
 
           <div className="flex gap-2 my-3">
@@ -96,7 +96,7 @@ const AuthContainer = () => {
             </Button>
           </div>
 
-          <div className="text-center text-[14px] text-muted-foreground font-light">
+          <div className="text-center text-[14px] text-slate-500 dark:text-slate-400 font-light">
             {isLogin ? (
               <>
                 Don&apos;t have an account?{" "}

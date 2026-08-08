@@ -9,15 +9,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SearchIcon } from "lucide-react";
+import { STATUS_OPTIONS } from "@/lib/application";
 
 export const statusOptions = [
   { value: "all", label: "All statuses" },
-  { value: "saved", label: "Saved" },
-  { value: "applied", label: "Applied" },
-  { value: "interview", label: "Interview" },
-  { value: "offer", label: "Offer" },
-  { value: "rejected", label: "Rejected" },
-  { value: "withdrawn", label: "Withdrawn" },
+  ...STATUS_OPTIONS,
 ] as const;
 
 export type StatusFilter = (typeof statusOptions)[number]["value"];

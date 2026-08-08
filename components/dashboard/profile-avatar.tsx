@@ -47,7 +47,11 @@ const ProfileAvatar = ({
 
       const uploaded = await response.json();
 
-      await authClient.updateUser({ image: uploaded.secure_url });
+      const { error: updateError } = await authClient.updateUser({
+        image: uploaded.secure_url,
+      });
+      if (updateError) throw new Error(updateError.message ?? "Update failed");
+
       toast.success("Avatar updated successfully!");
     } catch (error) {
       console.error(error);

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import ChangePasswordCard from "@/components/dashboard/change-password-card";
 import ProfileAvatar from "@/components/dashboard/profile-avatar";
+import StatTile from "@/components/dashboard/stat-tile";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +26,6 @@ import {
   CheckCircle2Icon,
   TrendingUp,
   Users,
-  type LucideIcon,
 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -34,33 +34,6 @@ import { z } from "zod";
 const nameSchema = z.object({
   name: z.string().min(1, "Name is required"),
 });
-
-function StatTile({
-  title,
-  content,
-  suffix = "",
-  icon: Icon,
-}: {
-  title: string;
-  content: number;
-  suffix?: string;
-  icon: LucideIcon;
-}) {
-  return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          {title}
-        </h3>
-        <Icon className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-      </div>
-      <span className="mt-1 block text-xl font-semibold">
-        {content}
-        {suffix}
-      </span>
-    </div>
-  );
-}
 
 const ProfilePage = () => {
   const { data: session, isPending, refetch } = authClient.useSession();
@@ -147,7 +120,7 @@ const ProfilePage = () => {
                   </p>
                   <div className="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                     {session.user.emailVerified ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-700 dark:bg-green-500/10 dark:text-green-400">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
                         <CheckCircle2Icon className="h-3 w-3" />
                         Verified
                       </span>
@@ -235,21 +208,25 @@ const ProfilePage = () => {
               <h2 className="text-sm font-semibold">Your Pipeline</h2>
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <StatTile
+                  variant="inset"
                   title="Total"
                   content={stats?.total ?? 0}
                   icon={Briefcase}
                 />
                 <StatTile
+                  variant="inset"
                   title="Active"
                   content={stats?.active ?? 0}
                   icon={Activity}
                 />
                 <StatTile
+                  variant="inset"
                   title="Interviewing"
                   content={stats?.interviewing ?? 0}
                   icon={Users}
                 />
                 <StatTile
+                  variant="inset"
                   title="Response Rate"
                   content={stats?.responseRate ?? 0}
                   suffix="%"

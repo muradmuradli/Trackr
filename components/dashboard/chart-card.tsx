@@ -21,7 +21,7 @@ const ChartCard = ({
 
   return (
     <div
-      className={`border rounded-lg p-4 sm:p-6 bg-white dark:bg-slate-900 ${className}`}
+      className={`border border-slate-200 dark:border-slate-800 rounded-lg p-4 sm:p-6 bg-white dark:bg-slate-900 ${className}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>

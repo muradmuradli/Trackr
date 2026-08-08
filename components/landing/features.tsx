@@ -1,4 +1,4 @@
-import { ArrowRight, Bell, CheckCircle2, LayoutGrid } from "lucide-react";
+import { Bell, CheckCircle2, LayoutGrid } from "lucide-react";
 
 const Features = () => {
   const features = [

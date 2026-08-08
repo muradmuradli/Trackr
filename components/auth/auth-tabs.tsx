@@ -25,7 +25,7 @@ const AuthTabs = ({ isLogin, setIsLogin }: AuthTabsProps) => {
         value={isLogin ? "log-in" : "sign-up"}
         onValueChange={(value) => setIsLogin(value === "log-in")}
       >
-        <TabsList className="w-full py-5 px-1 bg-muted">
+        <TabsList className="w-full py-5 px-1 bg-slate-100 dark:bg-slate-800">
           {tabs.map((tab) => (
             <TabsTrigger className="py-4" key={tab.value} value={tab.value}>
               {tab.name}
